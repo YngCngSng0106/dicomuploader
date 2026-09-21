@@ -260,9 +260,8 @@ public class StoreSCU {
         Device device = new Device("storescu");
         Connection conn = new Connection();
         device.addConnection(conn);
-        ApplicationEntity ae = new ApplicationEntity("STORESCU");
-        device.addApplicationEntity(ae);
-        ae.addConnection(conn);
+        device.addApplicationEntity(this.ae);
+        this.ae.addConnection(conn);
 
         this.remote.setHostname(host);
         this.remote.setPort(port);

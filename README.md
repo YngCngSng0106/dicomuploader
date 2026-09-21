@@ -113,18 +113,30 @@ close() 释放关联并等待 Socket 关闭，关闭线程池
 ## 构建与运行
 
 ```bash
-# 打包（生成 target/dicom_uploader-0.0.1-SNAPSHOT-jar-with-dependencies.jar）
+# 打包（生成 target/dicom_uploader-0.0.1-SNAPSHOT.jar）
 mvn clean package
 
 # 运行
-java -jar target/dicom_uploader-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+java -jar target/dicom_uploader-0.0.1-SNAPSHOT.jar
 ```
 
 运行前请先确认 `application.yml` 中的上传目录、PACS 地址与端口。日志输出至 `./logs/application.log`。
 
+打包由 `spring-boot-maven-plugin` 完成，产出为 Spring Boot 可执行 jar（依赖已内嵌），运行时只需目标机器安装 **JRE 8 及以上**。三种配置项均可通过启动参数临时覆盖，无需改配置文件：
+
+```bash
+java -jar target/dicom_uploader-0.0.1-SNAPSHOT.jar \
+  --upload.dicompath=D:\dicom \
+  --server.ip=10.245.181.200 \
+  --server.port=11112
+```
+
+> 依赖获取说明：`dcm4che` 系列构件未发布到 Maven Central，`pom.xml` 中已声明官方仓库 `https://maven.dcm4che.org/`，首次构建需要能访问该地址（其余依赖来自 Maven Central）。
+
 ## 已知限制
 
-- 上传目录、PACS 地址写死在配置文件中，未提供命令行参数覆盖。
+- 上传目录、PACS 地址默认取自配置文件，可通过 `--upload.dicompath` 等启动参数覆盖，但未做参数校验。
 - 无断点续传与失败重试，中断后重新运行会从目录头部重新扫描（已上传文件会重复推送）。
 - 无并发发送，单线程顺序上传，大批量数据耗时较长。
+- 未引入 `dcm4che-imageio-rle` / `dcm4che-imageio-opencv`，若 PACS 不接受文件原始传输语法、需要解压降级传输（RLE / JPEG Lossless / JPEG2000），该文件会发送失败。
 - `Uploader.uploadDicom()` 与 `StoreSCU.sendFiles()` 中使用 `printStackTrace()` 输出异常，生产环境建议改为日志记录。
