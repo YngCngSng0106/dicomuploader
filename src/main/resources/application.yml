@@ -1,0 +1,17 @@
+upload:
+  dicompath: J:\测试dicom
+server:
+  ip: 10.245.181.200
+  port: 11112
+timer:
+  cycletimeout: 5
+logging:
+  file:
+    path: ./logs  # jar包同级目录下的logs文件夹
+    name: ./logs/application.log
+  level:
+    root: info
+    com.yourpackage: debug
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
